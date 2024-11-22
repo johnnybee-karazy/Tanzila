@@ -36,9 +36,9 @@ get_header(); ?>
 				    'order_by' => 'date',
 				    'order' => 'desc',
 				  ]);
-				echo '<pre>';
-				var_dump($citylist->posts);
-				echo '</pre>';
+				// echo '<pre>';
+				// var_dump($citylist->posts);
+				// echo '</pre>';
 
 				if($citylist->have_posts()): ?>
 				  <ul class="city-tiles">
