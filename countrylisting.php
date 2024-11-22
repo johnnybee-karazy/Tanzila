@@ -13,11 +13,7 @@
  */
 
 get_header(); ?>
-	<style > 
-		.citieslisting tr:nth-child(odd) {
-            background-color: #f0f0f0;
-        }
-	</style>
+	
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 
