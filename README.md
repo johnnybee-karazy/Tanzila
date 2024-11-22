@@ -13,3 +13,10 @@ Requirements
 - All code must be documented.
 - Write optimized and performant code.
 - The project file structure should be organized and logical.
+
+
+How to use codes and files
+- after wordpress install use storefront theme
+- copy functions.php to theme folder (wp-content/theme/storefront/)
+- copy the template file (countrylisting.php) to the same folder (wp-content/theme/storefront/)
+- create a page from the backend and use or change the template to CountryListing 
