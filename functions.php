@@ -221,14 +221,6 @@ class Cities_Widget extends WP_Widget{
 	<?php
 	}
 
-	// function update($new_instance, $old_instance) {
-	// 	$instance = $old_instance;
-	// 	$instance['title'] = strip_tags($new_instance['title']);
-	// 	$instance['numberOfListings'] = strip_tags($new_instance['numberOfListings']);
-	// 	return $instance;
-	// }
-
-
 	// showing html here
 	function getCitiesListings($numberOfListings) { 
 	global $post;
@@ -270,9 +262,69 @@ register_widget('Cities_Widget');
 
 /*********** start ajax search*******************/
 
+// add the ajax fetch js
+add_action( 'wp_footer', 'ajax_fetch' );
+function ajax_fetch() {
+?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+function ajax_search_fetch(){
 
+    jQuery.ajax({
+        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+        type: 'post',
+        data: { action: 'data_fetch', keyword: jQuery('#keyword').val() },
+        success: function(data) {
+            jQuery('#datafetch').html( data );
+            jQuery('#citieslisting').css("display", "none");
+        }
+    });
+
+}
+
+$("input#keyword").keyup(function() {
+	  if ($(this).val().length > 2) {
+	    $("#datafetch").show();
+	  } else {
+	    $("#datafetch").hide();
+	  }
+});
+</script>
+
+<?php
+}
+//This code will interact with HTML to help you create WP Ajax search without a plugin.
+add_action('wp_ajax_nopriv_data_fetch','data_fetch');
+
+function data_fetch(){
+	$the_query = new WP_Query( array( 'posts_per_page' => -1, 's' => esc_attr( $_POST['keyword'] ), 'post_type' => array('cities') ) );
+	$appid = 'e2a5c33637f0db180522053d2f3654e6'; //openweathermap app id
+	if( $the_query->have_posts() ) :
+		echo '<ul>';
+		while( $the_query->have_posts() ): $the_query->the_post(); ?>            
+			<li><a href="<?php echo esc_url( post_permalink() ); ?>"><?php the_title();?></a></li>
+		<?php endwhile;
+
+		echo'</ul>';
+		wp_reset_postdata();  
+	endif;
+	die();
+}
 
 /*************end ajax search****************************/
+
+function template_chooser($template)   
+{    
+  global $wp_query;   
+  $post_type = get_query_var('post_type');   
+  if( $wp_query->is_search && $post_type == 'cities' )   
+  {
+    return locate_template('search.php');  //  redirect to archive-search.php
+  }   
+  return $template;   
+}
+add_filter('template_include', 'template_chooser');   
+
 
 //add_filter('use_block_editor_for_post', '__return_false', 10);
 
