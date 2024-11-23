@@ -13,7 +13,14 @@
  */
 
 get_header(); ?>
-	
+	<style> 
+		.citieslisting tr:nth-child(odd) {
+            background-color: #f0f0f0;
+        }
+        div.search_result {
+		  display: none;
+		}
+	</style>
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 
@@ -26,52 +33,37 @@ get_header(); ?>
 				get_template_part( 'content', 'page' );
 
 				/***************start for ajax filter***********************/
-				$citylist = new WP_Query([
-				    'post_type' => 'cities',
-				    'posts_per_page' => -1,
-				    'order_by' => 'date',
-				    'order' => 'desc',
-				  ]);
-				// echo '<pre>';
-				// var_dump($citylist->posts);
-				// echo '</pre>';
 
-				if($citylist->have_posts()): ?>
-				  <ul class="city-tiles">
-				    <?php
-				      //while($citylist->have_posts()) : $citylist->the_post();
-				        //include('_components/project-list-item.php');
-				        foreach ($citylist->posts as $key){
-					        echo '<li>'.$key->post_title.'</li>';
-					        // echo '<li></li>';
-					        // echo '<li></li>';
-					        // echo '<li></li>';
-				    	}
-				      //endwhile;
-				    ?>
-				  </ul>
-				  <?php wp_reset_postdata(); ?>
-				<?php endif; 
+				?>
+				<div class="search_bar">
+				    <form action="/" method="get" autocomplete="off">
+				        <input type="text" name="s" placeholder="Search city here..." id="keyword" class="input_search" onkeyup="ajax_search_fetch()">
+				        <button>
+				            Search City
+				        </button>
+				        <button onClick="window.location.reload();">Clear</button>
+				    </form>
+				    <div class="search_result" id="datafetch">
+				        <ul>
+				            <li>Please wait..</li>
+				        </ul>
+				    </div>
+				</div>
+
+
+
+				<?php
 				/*****************end for ajax filter***********************/
 
-				// $the_query = new WP_Query( array( 'post_type' => 'cities' ) );
+				
 
-				// while ( $the_query->have_posts() ) : $the_query->the_post();
-				//     echo '<tr><td>';
-				//     the_title();
-				//     echo '</td></tr>';
-				// endwhile;
-
-				// wp_reset_postdata();
-
-				//require_once "wp-load.php";
 				global $wpdb;
 				$myrows = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}posts where post_type = 'cities' and post_status = 'publish'" );
-				$appid = 'e2a5c33637f0db180522053d2f3654e6';
+				$appid = 'e2a5c33637f0db180522053d2f3654e6'; //openweathermap app id
 				// echo '<pre>';
 				// var_dump($myrows);
 				// echo '</pre>';
-				echo '<table class="citieslisting">';
+				echo '<table class="citieslisting" id="citieslisting">';
 				echo '<tr>
 						<td>City</td>
 						<td>Country</td>
@@ -109,15 +101,6 @@ get_header(); ?>
 				echo '</table>';
 
 
-				echo '*************************************************************************';
-
-				?>
-
-
-
-
-				<?php
-
 				/**
 				 * Functions hooked in to storefront_page_after action
 				 *
@@ -130,6 +113,7 @@ get_header(); ?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->
+	<!-- wp filter with js -->
 <script type="text/javascript">
 	$('.cat-list_item').on('click', function() {
 	  $('.cat-list_item').removeClass('active');
